@@ -1,0 +1,84 @@
+<div class="container">
+  <h1>Formulario de Productos</h1>
+  <form id="formProductPost" action="" method="">
+    <div class="form-group">
+      <label for="title">Título</label>
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        name="title"
+        placeholder="Ingrese el título del producto"
+      />
+    </div>
+    <div class="form-group">
+      <label for="description">Descripción</label>
+      <textarea
+        class="form-control"
+        id="description"
+        name="description"
+        placeholder="Ingrese la descripción del producto"
+      ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="price">Precio</label>
+      <input
+        type="number"
+        class="form-control"
+        id="price"
+        name="price"
+        placeholder="Ingrese el precio del producto"
+      />
+    </div>
+    <div class="form-group">
+      <label for="thumbnail">URL de las imágenes</label>
+      <input
+        type="text"
+        class="form-control"
+        id="thumbnail"
+        name="thumbnail"
+        placeholder="Ingrese las URLs de las imágenes del producto"
+      />
+    </div>
+    <div class="form-group">
+      <label for="code">Código</label>
+      <input
+        type="text"
+        class="form-control"
+        id="code"
+        name="code"
+        placeholder="Ingrese el código del producto"
+      />
+    </div>
+    <div class="form-group">
+      <label for="stock">Stock</label>
+      <input
+        type="number"
+        class="form-control"
+        id="stock"
+        name="stock"
+        placeholder="Ingrese el stock del producto"
+      />
+    </div>
+    <div class="form-group">
+      <label for="status">Estado</label>
+      <select class="form-control" id="status" name="status">
+        <option value="true">Disponible</option>
+        <option value="false">No disponible</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="category">Categoría</label>
+      <input
+        type="text"
+        class="form-control"
+        id="category"
+        name="category"
+        placeholder="Ingrese la categoría del producto"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Crear Producto</button>
+  </form>
+</div>
+<a href="/products" id="formProductPost"></a>
+<script src="js/productPost.js"></script>
