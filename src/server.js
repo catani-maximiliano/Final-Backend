@@ -4,7 +4,7 @@ const { server, app } = require("./socketIO/socketServer");
 const mongoConfig = require("./config/mongoConfig/config.mongo");
 const cookieParser = require("cookie-parser");
 const { port } = require("./config");
-const pasportConfig = require("./config/pasportConfig/config.pasport");
+const passportConfig = require("./config/passportConfig/config.passport");
 const swaggerRoutes = require('./utils/swagger');
 
 /**se utiliza para conectar y configurar una base de datos MongoDB en una 
@@ -12,7 +12,7 @@ const swaggerRoutes = require('./utils/swagger');
 mongoConfig(app);
 
 /**se utiliza para configurar y utilizar Passport.js en una aplicación Node.js utilizando la instancia de Express app. */
-pasportConfig(app);
+passportConfig(app);
 
 /** función personalizada que se utiliza para modularizar las rutas y los controladores
  *  de una aplicación Node.js utilizando la instancia de Express app */

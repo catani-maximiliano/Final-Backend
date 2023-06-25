@@ -1,35 +1,61 @@
-const form = document.getElementById("formProductPost");
-const productsLink = document.getElementById("productsLink")
+// Espera a que el documento se haya cargado completamente
+document.addEventListener("DOMContentLoaded", () => {
+    // Obtiene la referencia al formulario y al elemento de respuesta
+    const form = document.getElementById("formProductPost");
+    const responseElement = document.getElementById("response");
+  
+    // Agrega un controlador de eventos para el evento de envío del formulario
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault(); // Evita el comportamiento de envío predeterminado del formulario
+  
+      // Obtiene los valores de los campos del formulario
+      const title = document.getElementById("title").value;
+      const description = document.getElementById("description").value;
+      const price = document.getElementById("price").value;
+      const thumbnail = document.getElementById("thumbnail").value;
+      const code = document.getElementById("code").value;
+      const stock = document.getElementById("stock").value;
+      const status = document.getElementById("status").value;
+      const category = document.getElementById("category").value;
+  
+      // Crea un objeto con los datos del producto
+      const productData = {
+        title,
+        description,
+        price,
+        thumbnail,
+        code,
+        stock,
+        status,
+        category
+      };
+  
+      try {
+        // Realiza una solicitud POST al endpoint con los datos del producto
+        const response = await fetch("http://localhost:3000/api/products", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(productData)
+        });
+        
+        if (response.ok) {
 
-/**Este fragmento de código agrega un "event listener" al formulario (representado por la variable "form") que espera el 
- * evento "submit" para ejecutar una función. En esta función se previene el comportamiento por defecto del formulario al 
- * utilizar el método "preventDefault()".
-
-Luego se crea un objeto "FormData" con los datos del formulario y se los transforma en un objeto JSON. Este objeto JSON se 
-utiliza como cuerpo del pedido HTTP que se realiza al servidor a través de la función "fetch()".
-
-Los parámetros que se pasan a la función fetch() incluyen la URL de la API, los encabezados HTTP que indican el tipo de 
-contenido que se está enviando y el método HTTP utilizado, que en este caso es "POST".
-*/
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const data = new FormData(form)
-    const obj = {};
-    data.forEach((value, key) => obj[key] = value);
-
-    const url = "/api/products/form";
-    const headers = { "Content-Type": "application/json"};
-    const method = "POST";
-    const body = JSON.stringify(obj);
-
-    fetch(url, {
-        headers,
-        method,
-        body
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.log(error))
-    setTimeout(()=>{productsLink.click()}, 1000);
-})
+          // El producto se creó con éxito
+          const responseData = await response.json();
+          
+          console.log(responseData.payload.message);
+          if (responseData.status === 200) {
+            responseElement.textContent = "Producto creado con éxito."; 
+          } else {
+            responseElement.textContent =  "Error al crear el producto.";
+          }
+        }
+      } catch (error) {
+        console.error("Ocurrió un error:", error);
+        responseElement.textContent = "Ocurrió un error en la solicitud.";
+      }
+    });
+  });
+  

@@ -15,6 +15,18 @@ class SessionRouter extends Route {
         res.sendServerError(`something went wrong ${error}`)
       }
     })
+    
+    this.post('/set-session', ['PUBLIC'], (req, res) => {
+      try {
+        req.session.user = {
+          role: "ADMIN"
+        };
+        res.send("Session set to USER");
+      } 
+      catch (error) {
+        res.sendServerError(`something went wrong ${error}`)
+      }
+    })
   }
 }
 

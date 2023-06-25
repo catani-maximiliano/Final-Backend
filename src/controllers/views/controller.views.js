@@ -48,7 +48,7 @@ class ViewsRouter extends Route {
             }
         })
 
-        this.get('/products', ['USER'], (req, res) => {
+        this.get('/products', ['USER','ADMIN'], (req, res) => {
             try {
                 res.status(200).render('products');
             }
@@ -57,7 +57,7 @@ class ViewsRouter extends Route {
             }
         })
 
-        this.get('/products/form', ['PUBLIC'], (req, res) => {
+        this.get('/products/form', ['ADMIN'], (req, res) => {
             try {
                 res.status(200).render('productPost');
             }

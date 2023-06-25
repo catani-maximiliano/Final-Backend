@@ -1,8 +1,6 @@
 const Route = require("../../router/Class.Router");
 
-const {
-  MongoProductManager,
-} = require("../../dao/mongoClassManagers/productsClass/productMongoManager");
+const { MongoProductManager,} = require("../../dao/mongoClassManagers/productsClass/productMongoManager");
 const productsMongo = new MongoProductManager();
 const createMock = require("../../utils/mocks/productsMock");
 const productError = require("../../utils/errors/product/product.error");
@@ -16,48 +14,7 @@ const privateAcces = (req, res, next) => {
 
 class ProductsRouter extends Route {
   init() {
-    /**
-     * @swagger
-     * /:
-     *   get:
-     *     summary: Obtiene los productos
-     *     tags:
-     *       - Productos
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: query
-     *         name: category
-     *         schema:
-     *           type: string
-     *         description: Filtra los productos por categoría
-     *       - in: query
-     *         name: stock
-     *         schema:
-     *           type: number
-     *         description: Filtra los productos por cantidad en stock
-     *       - in: query
-     *         name: limit
-     *         schema:
-     *           type: number
-     *         description: Limita el número de productos devueltos por página
-     *       - in: query
-     *         name: page
-     *         schema:
-     *           type: number
-     *         description: Número de página a recuperar
-     *       - in: query
-     *         name: sort
-     *         schema:
-     *           type: string
-     *           enum: [asc, desc]
-     *         description: Ordena los productos por precio de forma ascendente (asc) o descendente (desc)
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
+
     this.get("/", ["PUBLIC"], async (req, res) => {
       try {
         const { user } = req.session;
@@ -70,32 +27,25 @@ class ProductsRouter extends Route {
 
         if (req.query.category == undefined && req.query.stock == undefined) {
           filter = {};
-        } else if (
-          req.query.category == undefined &&
-          req.query.stock != undefined
-        ) {
-          filter = {
-            stock: { $gte: req.query.stock },
-          };
-        } else if (
-          req.query.category != undefined &&
-          req.query.stock == undefined
-        ) {
-          filter = {
-            category: { $regex: req.query.category },
-          };
-        } else {
-          filter = {
-            category: { $regex: req.query.category },
-            stock: { $gte: req.query.stock },
-          };
+        } 
+        else if (req.query.category == undefined && req.query.stock != undefined ) {
+          filter = { stock: { $gte: req.query.stock }};
+        } 
+        else if (req.query.category != undefined && req.query.stock == undefined) {
+          filter = { category: { $regex: req.query.category }};
+        } 
+        else {
+          filter = {category: { $regex: req.query.category }, stock: { $gte: req.query.stock }};
         }
 
-        if (req.query.limit == undefined) {
+
+        if (req.query.limit == undefined) { 
           limit = 10;
-        } else {
+        } 
+        else { 
           limit = req.query.limit;
         }
+
 
         if (req.query.page == undefined) {
           page = 1;
@@ -123,32 +73,19 @@ class ProductsRouter extends Route {
           filter,
           condicionesQery
         );
+
         let nextLink;
         let prevLink;
         if (products.hasPrevPage == false) {
           prevLink = null;
         } else {
-          prevLink =
-            req.protocol +
-            "://" +
-            req.get("host") +
-            "/products" +
-            "?" +
-            `page=${products.prevPage}` +
-            `&limit=${limit}&sort=${prevSort}`;
+          prevLink = req.protocol + "://" + req.get("host") + "/products" + "?" + `page=${products.prevPage}` + `&limit=${limit}&sort=${prevSort}`;
         }
 
         if (products.hasNextPage == false) {
           nextLink = null;
         } else {
-          nextLink =
-            req.protocol +
-            "://" +
-            req.get("host") +
-            "/products" +
-            "?" +
-            `page=${products.nextPage}` +
-            `&limit=${limit}&sort=${prevSort}`;
+          nextLink = req.protocol + "://" + req.get("host") + "/products" + "?" + `page=${products.nextPage}` + `&limit=${limit}&sort=${prevSort}`;
         }
 
         const respuestaInfo = {
@@ -167,54 +104,17 @@ class ProductsRouter extends Route {
         };
         res.sendSuccess(respuestaInfo);
       } catch (error) {
-        req.logger.fatal("Poductos no encontrados");
+        req.logger.fatal("Productos no encontrados");
         res.sendServerError(`something went wrong ${error}`);
       }
     });
 
-    /**
-     * @swagger
-     * /mockingproducts:
-     *   get:
-     *     summary: Obtiene productos simulados (mock)
-     *     tags:
-     *       - Productos
-     *     security:
-     *       - bearerAuth: []
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
     this.get("/mockingproducts", ["PUBLIC"], (req, res) => {
       const products = createMock(100);
 
       res.sendSuccess(products);
     });
 
-    /**
-     * @swagger
-     * /{id}:
-     *   get:
-     *     summary: Obtiene un producto por su ID
-     *     tags:
-     *       - Productos
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
-     *         description: ID del producto a obtener
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
     this.get("/:id", ["PUBLIC"], async (req, res) => {
       try {
         const productId = req.params.id;
@@ -226,44 +126,6 @@ class ProductsRouter extends Route {
       }
     });
 
-    /**
-     * @swagger
-     * /:
-     *   post:
-     *     summary: Crea un nuevo producto
-     *     tags:
-     *       - Productos
-     *     security:
-     *       - bearerAuth: []
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               title:
-     *                 type: string
-     *               description:
-     *                 type: string
-     *               price:
-     *                 type: number
-     *               thumbnail:
-     *                 type: string
-     *               code:
-     *                 type: string
-     *               stock:
-     *                 type: number
-     *               status:
-     *                 type: string
-     *               category:
-     *                 type: string
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
     this.post("/", ["ADMIN", "PREMIUM"], async (req, res) => {
       try {
         const { title, description, price, thumbnail, code, stock, status, category} = req.body;
@@ -289,51 +151,6 @@ class ProductsRouter extends Route {
       }
     });
 
-    /**
-     * @swagger
-     * /{id}:
-     *   put:
-     *     summary: Actualiza un producto existente
-     *     tags:
-     *       - Productos
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
-     *         description: ID del producto a actualizar
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               title:
-     *                 type: string
-     *               description:
-     *                 type: string
-     *               price:
-     *                 type: number
-     *               thumbnail:
-     *                 type: string
-     *               code:
-     *                 type: string
-     *               stock:
-     *                 type: number
-     *               status:
-     *                 type: string
-     *               category:
-     *                 type: string
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
     this.put("/:id", ["ADMIN"], async (req, res) => {
       try {
         const productId = req.params.id;
@@ -386,28 +203,6 @@ class ProductsRouter extends Route {
       }
     });
 
-    /**
-     * @swagger
-     * /{id}:
-     *   delete:
-     *     summary: Elimina un producto por su ID
-     *     tags:
-     *       - Productos
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
-     *         description: ID del producto a eliminar
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
     this.delete("/:id", ["ADMIN, PREMIUM"], async (req, res) => {
       try {
         const productId = req.params.id;

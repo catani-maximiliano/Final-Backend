@@ -1,321 +1,179 @@
-const passport = require("passport");
-const Route = require("../../router/Class.Router");
-const NodemailerAdapter = require("../../adapters/nodemailer.adapter");
-const correo = new NodemailerAdapter();
-const {
-  UserManager,
-} = require("../../dao/mongoClassManagers/userClass/userMongoManager");
-const userBD = new UserManager();
-const {
-  isValidPasswordMethod,
-  createHash,
-} = require("../../utils/cryptPassword");
+const {v4: uuidv4} = require('uuid')
 
-class AuthRouter extends Route {
-  init() {
-    /**
-     * @swagger
-     * /:
-     *   post:
-     *     summary: Iniciar sesión
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               username:
-     *                 type: string
-     *               password:
-     *                 type: string
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '400':
-     *         description: Credenciales inválidas
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.post(
-      "/",
-      ["PUBLIC"],
-      passport.authenticate("login", {
-        failureRedirect: "/api/auth/failLogin",
-      }),
-      async (req, res) => {
-        try {
-          if (!req.user)
-            return res.status(400).json({ error: "Credenciales invalidas" });
-          req.session.destroy;
-          req.session.user = {
-            first_name: req.user.first_name,
-            last_name: req.user.last_name,
-            age: req.user.age,
-            email: req.user.email,
-            role: "usuario",
-          };
+const ticketsModel = require('../../dao/models/tickets.model');
+const userModel = require('../../dao/models/user.model');
+const { MongoCartManager } = require('../../dao/mongoClassManagers/cartsClass/cartMongoManager');
+const cartsMongo = new MongoCartManager();
 
-          res.sendSuccess(req.user);
-        } catch (error) {
-          //res.sendServerError(`something went wrong ${error}`)
-          req.logger.error("Usuario no autenticado");
-        }
-      }
-    );
+const { MongoProductManager } = require('../../dao/mongoClassManagers/productsClass/productMongoManager');
+const productsMongo = new MongoProductManager();
+const Route = require('../../router/Class.Router');
 
-    /**
-     * @swagger
-     * /passwordReset:
-     *   post:
-     *     summary: Restablecer contraseña
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               user:
-     *                 type: string
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.post("/passwordReset", ["PUBLIC"], async (req, res) => {
-      try {
-        const expirationTime = new Date().getTime() + 3600000;
-        let linkMold = req.protocol + "://" + req.get("host");
-        const url = linkMold + `/passwordReset/${expirationTime}`;
-        const email = { email: req.body.user };
-        req.session.destroy;
-        req.session.expirationTime = expirationTime;
-        req.session.email = email;
-        const mensaje = {
-          message: `<div> <h1>Hola!</h1> <h2>Este es el link para recuperar tu contreseña</h2> <h3> ${url}</h3> </div>`,
-          subject: "Recuperacion  de contraseña",
-        };
-        const emailSend = await correo.sendNotification(email, mensaje);
-        console.log(emailSend);
-        res.json({ emailSend });
-      } catch (error) {
-        res.sendServerError(`something went wrong ${error}`);
-      }
-    });
 
-    /**
-     * @swagger
-     * /passwordUpdate:
-     *   post:
-     *     summary: Actualizar contraseña
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               newPaswword1:
-     *                 type: string
-     *               newPaswword2:
-     *                 type: string
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.post("/passwordUpdate", ["PUBLIC"], async (req, res) => {
-      try {
-        const pw1 = req.body.newPaswword1;
-        const pw2 = req.body.newPaswword2;
-        const email = req.session.email.email;
-        const user = await userBD.findUser(email);
-        if (pw1 === pw2) {
-          if (isValidPasswordMethod(pw1, user)) {
-            console.log("contraseña igual a la anterior");
-            res.json({
-              mesagge: "Contraseña igual a la anterior, usar una nueva.",
-            });
-          } else {
-            await userBD.updatePassword(email, createHash(pw1));
-            res.json({ mesagge: "Contraseña actualizada" });
-          }
-        } else {
-          res.json({ mesagge: "Contraseñas no coinciden." });
-        }
-      } catch (error) {
-        res.sendServerError(`something went wrong ${error}`);
-      }
-    });
 
-    /**
-     * @swagger
-     * /failLogin:
-     *   get:
-     *     summary: Falló el inicio de sesión
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     responses:
-     *       '200':
-     *         description: OK
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.get("/failLogin", ["PUBLIC"], (req, res) => {
-      try {
-        res.json({ error: "Falló el login" });
-      } catch (error) {
-        res.sendServerError(`something went wrong ${error}`);
-      }
-    });
+class CartRouter extends Route {
+    init() {
+        this.get('/', ['USER'], async (req, res) => {
+            try {
+                const carts = await cartsMongo.getCarts();
+                res.sendSuccess(carts);
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
 
-    /**
-     * @swagger
-     * /github:
-     *   get:
-     *     summary: Iniciar sesión con GitHub
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     responses:
-     *       '302':
-     *         description: Redireccionamiento a la página de inicio de sesión de GitHub
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.get(
-      "/github",
-      ["PUBLIC"],
-      passport.authenticate("github", { scope: ["user:email"] }),
-      async (req, res) => {}
-    );
+        this.post('/', ['USER'], async (req, res) => {
+            try {
+                const createdCart = await cartsMongo.addCart({});
+                res.sendSuccess(createdCart);
 
-    /**
-     * @swagger
-     * /githubcallback:
-     *   get:
-     *     summary: Callback de autenticación con GitHub
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     responses:
-     *       '302':
-     *         description: Redireccionamiento a la página de inicio después de la autenticación exitosa
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.get(
-      "/githubcallback",
-      ["PUBLIC"],
-      passport.authenticate("github", { failureRedirect: "/login" }),
-      async (req, res) => {
-        try {
-          req.session.user = req.user;
-          res.redirect("/products");
-        } catch (error) {
-          res.sendServerError(`something went wrong ${error}`);
-        }
-      }
-    );
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
 
-    /**
-     * @swagger
-     * /google:
-     *   get:
-     *     summary: Iniciar sesión con Google
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     responses:
-     *       '302':
-     *         description: Redireccionamiento a la página de inicio de sesión de Google
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.get(
-      "/google",
-      ["PUBLIC"],
-      passport.authenticate("google", { scope: ["profile"] }),
-      async (req, res) => {}
-    );
+        this.get('/:id', ['USER'], async (req, res) => {
+            try {
+                const cartId = req.params.id;
+                const getById = await cartsMongo.getCartById(cartId);
+                res.sendSuccess(getById);
+                //res.status(500).render('cart', getById);//mandar a vistas!!!!!!!!!!!!!
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
 
-    /**
-     * @swagger
-     * /google/callback:
-     *   get:
-     *     summary: Callback de autenticación con Google
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     responses:
-     *       '302':
-     *         description: Redireccionamiento a la página de inicio después de la autenticación exitosa
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.get(
-      "/google/callback",
-      ["PUBLIC"],
-      passport.authenticate("google", { failureRedirect: "/login" }),
-      async (req, res) => {
-        try {
-          req.session.user = req.user;
-          res.redirect("/products");
-        } catch (error) {
-          res.sendServerError(`something went wrong ${error}`);
-        }
-      }
-    );
+        this.get("/:cid/purchase", ["USER"], async (req, res) => {
+            try {
+                const { cid } = req.params;
+                const cart = await cartsMongo.getCartById(cid);
+                const productsToPurchase = cart.products;
 
-    /**
-     * @swagger
-     * /logout:
-     *   get:
-     *     summary: Cerrar sesión
-     *     tags:
-     *       - Autenticación
-     *     security:
-     *       - []
-     *     responses:
-     *       '302':
-     *         description: Redireccionamiento a la página de inicio de sesión después de cerrar sesión
-     *       '500':
-     *         description: Error interno del servidor
-     */
-    this.get("/logout", ["PUBLIC"], (req, res) => {
-      try {
-        req.session.destroy((err) => {
-          if (err) {
-            res.json({ msg: err });
-          }
-          res.redirect("/login");
-        });
-      } catch (error) {
-        res.sendServerError(`something went wrong ${error}`);
-      }
-    });
-  }
+                const currentUser = await userModel.findOne({cart: cart._id});
+
+                const purchaseFilterAvailable = productsToPurchase.filter(p => p.product.stock !== 0);
+                const purchaseFilterUnavailable = productsToPurchase.filter(p => p.product.stock === 0);
+
+                purchaseFilterAvailable.forEach(async (p) => {
+                    const productToSell = await productsMongo.findById(p.product._id)
+                    productToSell.stock = productToSell.stock - p.quantity;
+                    await productsMongo.updateOne({_id: p.product._id}, productToSell);
+                })
+
+                const newTicketInfo = {
+                    code: uuidv4(),
+                    purchase_datatime: new Date().toLocaleString(),
+                    amount: purchaseFilterAvailable.reduce((acc, curr) => acc + curr.product.price*curr.quantity, 0),
+                    purchaser: currentUser.email
+                }
+
+                const newTicket = await ticketsModel.create(newTicketInfo);
+
+                if(newTicket){
+                    await cartManager.updateOne(cid, purchaseFilterUnavailable);
+                }
+
+                res.sendSuccess(newTicket);
+                
+
+            } catch (error) {
+                throw error
+            }
+        })
+
+        this.post('/:cid/products/:pid', ['USER'], async (req, res) => {
+            try {
+                const cartId = req.params.cid;
+                const productId = req.params.pid;
+                const getCartById = await cartsMongo.getCartById(cartId);
+                const verifyExistence = getCartById.products.find((e) => e.product.id == productId);
+
+                if (verifyExistence) {
+                    const updateCartProducts = await cartsMongo.postCartProductsId(cartId, productId, true);
+                    res.sendSuccess(updateCartProducts);
+                }
+                else {
+                    const updateCartProducts = await cartsMongo.postCartProductsId(cartId, productId, false);
+                    res.sendSuccess(updateCartProducts);
+                }
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
+
+        this.delete('/:cid/products/:pid', ['USER'], async (req, res) => {
+            try {
+                const cartId = req.params.cid;
+                const productId = req.params.pid;
+                const getCartById = await cartsMongo.getCartById(cartId);
+                const verifyExistence = getCartById.products.find((e) => e.product.id == productId);
+
+                if (verifyExistence === undefined) {
+                    res.sendUserError({ mesagge: 'not found' });
+                }
+                else {
+                    const productsArrayPosition = getCartById.products.findIndex(item => item.product.id === productId);
+                    getCartById.products.splice(productsArrayPosition, 1);
+                    let newArray = getCartById.products;
+                    const deleteCartProducts = await cartsMongo.deleteCartProductsId(cartId, newArray);
+                    res.sendSuccess(deleteCartProducts);
+                }
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
+
+        this.delete('/:id', ['ADMIN'], async (req, res) => {
+            try {
+                const cartId = req.params.id;
+                const getById = await cartsMongo.deleteById(cartId);
+                res.sendSuccess(getById);
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
+
+        this.put('/:cid/products/:pid', ['USER'], async (req, res) => {
+            try {
+                const { quantity } = req.body;
+                const cartId = req.params.cid;
+                const productId = req.params.pid;
+                const getCartById = await cartsMongo.getCartById(cartId);
+
+                const verifyExistence = getCartById.products.find((e) => e.product.id == productId);
+                if (verifyExistence) {
+                    const updateCartProducts = await cartsMongo.updateCartProductsId(cartId, productId, true, quantity);
+                    res.sendSuccess(updateCartProducts);
+                }
+
+                else {
+                    const updateCartProducts = await cartsMongo.updateCartProductsId(cartId, productId, false, quantity);
+                    res.sendSuccess(updateCartProducts);
+                }
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
+
+        this.put('/:cid', ['ADMIN'], async (req, res) => {
+            try {
+                const { products } = req.body;
+                const cartId = req.params.cid;
+                const getCartById = await cartsMongo.updateCartId(cartId, products);
+                res.sendSuccess("cart updated");
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
+    }
 }
 
-module.exports = AuthRouter;
+module.exports = CartRouter;
