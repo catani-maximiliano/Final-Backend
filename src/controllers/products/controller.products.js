@@ -126,7 +126,7 @@ class ProductsRouter extends Route {
       }
     });
 
-    this.post("/", ["ADMIN", "PREMIUM"], async (req, res) => {
+    this.post("/", ["PREMIUM"], async (req, res) => {
       try {
         const { title, description, price, thumbnail, code, stock, status, category} = req.body;
         const newProduct = { title, description, price, thumbnail, code, stock, status, category,};

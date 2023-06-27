@@ -9,12 +9,7 @@ class UsersRouter extends Route {
   init() {
 
     //register
-    this.post(
-      "/",
-      ["PUBLIC"],
-      passport.authenticate("register", {
-        failureRedirect: "/user/failRegister",
-      }),
+    this.post( "/", ["PUBLIC"], passport.authenticate("register", {failureRedirect: "/user/failRegister"}),
       async (req, res) => {
         try {
           req.logger.info("Nuevo usuario registrado");

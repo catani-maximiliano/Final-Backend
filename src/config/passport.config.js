@@ -53,7 +53,7 @@ const initializePassport = () => {
             req.logger.error("Usuario ya existente");
             return done(null, false);
           }
-
+          const dateNow = new Date();
           const newUserInfo = {
             first_name,
             last_name,
@@ -61,6 +61,7 @@ const initializePassport = () => {
             age,
             role: "USER",
             password: createHash(password),
+            last_connection: dateNow
           };
 
           const newUser = await userManager.createUser(newUserInfo);

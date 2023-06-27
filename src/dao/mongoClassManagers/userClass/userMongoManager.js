@@ -12,7 +12,6 @@ class UserManager {
     }
   };
 
-
   findUser = async (user) => {
     try {
       const response = await userModel.findOne({ email: user });
@@ -22,7 +21,6 @@ class UserManager {
     }
   };
 
-
   findByID = async (id) => {
     try {
       const response = await userModel.findById(id);
@@ -31,7 +29,6 @@ class UserManager {
       throw new Error(error);
     }
   };
-
 
   updatePassword = async (email, newPassword) => {
     try {

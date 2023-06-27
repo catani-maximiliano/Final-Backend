@@ -5,15 +5,19 @@ window.onload = function() {
     .catch(error => console.error(error));
 };
 
+
 const profile = document.getElementById("profile");
 const cartel = document.getElementById("cartel");
 
 function procesarDatos(data) {
+  console.log(data)
     profile.innerHTML =   
     `<h2>Profile</h2>
+    <p>Id: ${data.id}</p>
     <p>Name: ${data.first_name} ${data.last_name}</p>
     <p>Age: ${data.age}</p>
     <p>Email: ${data.email}</p>
-    <p>Role: ${data.role}</p>`;
+    <p>Role: ${data.role}</p>`
+    ;
  
 }

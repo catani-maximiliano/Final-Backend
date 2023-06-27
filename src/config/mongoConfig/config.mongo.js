@@ -11,7 +11,7 @@ const mongoConfig = (app) => {
         mongoUrl: dbSessionName,
         mongoOptions: { useNewUrlParser: true },
       }),
-      secret: "C0ntr4",
+      secret: "ContraseñaSecreta",
       resave: false,
       saveUninitialized: false,
     })

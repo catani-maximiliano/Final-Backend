@@ -16,14 +16,16 @@ class AuthRouter extends Route {
             return res.status(400).json({ error: "Credenciales inválidas" });
           } else {
             console.log(req.user)
+
             req.session.destroy
             req.session.user = {
+              idd: req.user._id,
               first_name: req.user.first_name,
               last_name: req.user.last_name,
               age: req.user.age,
               email: req.user.email,
               role: "usuario",
-              last_connection: req.user.last_name,
+              last_connection: req.user.last_connection,
             };
 
             const dateNow = new Date();
@@ -58,8 +60,8 @@ class AuthRouter extends Route {
 
     this.post('/passwordUpdate', ['PUBLIC'], async (req, res) => {
       try {
-        const pw1 = req.body.newPaswword1;
-        const pw2 = req.body.newPaswword2;
+        const pw1 = req.body.newPassword1;
+        const pw2 = req.body.newPassword2;
         const email = req.session.email.email;
         const user = await userBD.findUser(email);
         if (pw1 === pw2) {

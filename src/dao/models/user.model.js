@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    idd: Number
 });
 
 const userModel = mongoose.model(usersCollection, userSchema);
