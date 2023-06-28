@@ -164,6 +164,7 @@ class ProductsRouter extends Route {
           status,
           category,
         } = req.body;
+        
         const newUpdatedProduct = {
           title,
           description,
