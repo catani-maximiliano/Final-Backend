@@ -19,8 +19,9 @@ class MongoCartManager {
 Primero, intenta crear un nuevo documento de carrito usando Cart.create(cart). Si se realiza con éxito, devuelve un mensaje
  de éxito indicando que el carrito se agregó correctamente. De lo contrario, captura cualquier error y lo devuelve. */
   async addCart(cart) {
-    try {
-      const addMongoCart = await Cart.create(cart);
+    try {console.log("carttt")
+       await Cart.create(cart);
+       console.log(cart)
       return "Cart added successfully";
     } catch (error) {
       return error;
@@ -37,6 +38,15 @@ Si no se encuentra, se devuelve el valor null. */
     try {
       const getCartByIdMongo = await Cart.findOne({ _id: id });
       return getCartByIdMongo;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async getCartByUId(uid) {
+    try {
+      const getCartByUIdMongo = await Cart.findOne({ user_id: uid });
+      return getCartByUIdMongo;
     } catch (error) {
       return error;
     }

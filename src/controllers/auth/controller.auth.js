@@ -6,6 +6,9 @@ const { UserManager } = require('../../dao/mongoClassManagers/userClass/userMong
 const userBD = new UserManager();
 const { isValidPasswordMethod, createHash } = require('../../utils/cryptPassword');
 
+const { MongoCartManager } = require('../../dao/mongoClassManagers/cartsClass/cartMongoManager');
+const cartsMongo = new MongoCartManager();
+
 class AuthRouter extends Route {
   init() {
 
@@ -27,9 +30,13 @@ class AuthRouter extends Route {
               role: "usuario",
               last_connection: req.user.last_connection,
             };
+            
+            
 
             const dateNow = new Date();
             await userBD.updateConnection(req.user.email, dateNow);
+            
+                  cartsMongo.addCart({user_id: req.user._id,products:{}});
 
             res.sendSuccess(req.user);
           }

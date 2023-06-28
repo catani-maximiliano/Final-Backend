@@ -9,6 +9,10 @@ const productos = document.getElementById("productos");
 const cartel = document.getElementById("cartel");
 
 function procesarDatos(data) {
+  function agregarAlCarrito (data) {
+    const product = data.product
+  }
+
   const linkMold = data.linkMold;
   cartel.innerHTML = `
     <h1>¡Bienvenido/a ${data.user.first_name} ${data.user.last_name}!</h1>
@@ -29,7 +33,7 @@ function procesarDatos(data) {
             <button class="btn btn-dark">
               <a class="text-decoration-none text-light" href="/products/${product._id}">Product details</a>
             </button>
-            <button class="btn btn-dark">
+            <button onclick="agregarAlCarrito("${product._id}") class="btn btn-dark">
               <a href="">Add to cart</a>
             </button>
           </div>

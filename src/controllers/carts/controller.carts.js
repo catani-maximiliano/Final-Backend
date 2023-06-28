@@ -27,7 +27,18 @@ class CartRouter extends Route {
             try {
                 const createdCart = await cartsMongo.addCart({});
                 res.sendSuccess(createdCart);
-
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
+        
+        this.get('/:uid', ['USER'], async (req, res) => {
+            try {
+                const cartId = req.params.uid;
+                const getById = await cartsMongo.getCartByUId(cartId);
+                res.sendSuccess(getById);
+                //res.status(500).render('cart', getById);//mandar a vistas!!!!!!!!!!!!!
             }
             catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
