@@ -21,7 +21,7 @@ class AuthRouter extends Route {
           if (!req.user) {
             return res.status(400).json({ error: "Credenciales inválidas" });
           } else {
-            console.log(req.user);
+            //console.log(req.user._id);
 
             req.session.destroy;
             req.session.user = {
@@ -34,11 +34,13 @@ class AuthRouter extends Route {
               last_connection: req.user.last_connection,
             };
 
+            
             cartsMongo.addCart(req.user._id, {
               user_id: req.user._id,
               products: {},
             });
-
+            
+            
             const dateNow = new Date();
             await userBD.updateConnection(req.user.email, dateNow);
 
@@ -121,7 +123,7 @@ class AuthRouter extends Route {
     });
     
 
-    
+
     this.get(
       "/github",
       ["PUBLIC"],

@@ -17,6 +17,7 @@ class CartRouter extends Route {
             try {
                 const carts = await cartsMongo.getCarts();
                 res.sendSuccess(carts);
+                //console.log(req.session.cart._id)
             }
             catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
@@ -38,7 +39,7 @@ class CartRouter extends Route {
                 const cartId = req.params.uid;
                 const getById = await cartsMongo.getCartByUId(cartId);
                 res.sendSuccess(getById);
-                //res.status(500).render('cart', getById);//mandar a vistas!!!!!!!!!!!!!
+                
             }
             catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
@@ -50,7 +51,7 @@ class CartRouter extends Route {
                 const cartId = req.params.id;
                 const getById = await cartsMongo.getCartById(cartId);
                 res.sendSuccess(getById);
-                //res.status(500).render('cart', getById);//mandar a vistas!!!!!!!!!!!!!
+                
             }
             catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
@@ -95,19 +96,19 @@ class CartRouter extends Route {
             }
         })
 
-        this.post('/:cid/products/:pid', ['USER'], async (req, res) => {
+        this.post('/:uid/products/:pid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
             try {
-                const cartId = req.params.cid;
+                const cartUId = req.params.uid;
                 const productId = req.params.pid;
-                const getCartById = await cartsMongo.getCartById(cartId);
-                const verifyExistence = getCartById.products.find((e) => e.product.id == productId);
+                const getCartByUId = await cartsMongo.getCartByUId(cartUId);
+                const verifyExistence = getCartByUId.products.find((e) => e.product._id == productId);
 
                 if (verifyExistence) {
-                    const updateCartProducts = await cartsMongo.postCartProductsId(cartId, productId, true);
+                    const updateCartProducts = await cartsMongo.postCartProductsId(cartUId, productId, true);
                     res.sendSuccess(updateCartProducts);
                 }
                 else {
-                    const updateCartProducts = await cartsMongo.postCartProductsId(cartId, productId, false);
+                    const updateCartProducts = await cartsMongo.postCartProductsId(cartUId, productId, false);
                     res.sendSuccess(updateCartProducts);
                 }
             }

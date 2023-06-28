@@ -14,11 +14,16 @@ class MongoCartManager {
   async addCart(uid, cart) {
     try {
       const getCartByUIdMongo = await Cart.findOne({ user_id: uid });
+
       if (!getCartByUIdMongo) {
+
         await Cart.create(cart);
-        console.log(cart);
+        req.session.cart = getCartByUIdMongo._id
+        console.log(getCartByUIdMongo._id);
+
         return "Cart added successfully";
       }
+      console.log(getCartByUIdMongo._id)
     } catch (error) {
       return error;
     }
@@ -50,8 +55,7 @@ class MongoCartManager {
         const productsArrayPosition = cart.products.findIndex(
           (item) => item.product.id == idProduct
         );
-        cart.products[productsArrayPosition].quantity =
-          cart.products[productsArrayPosition].quantity + 1;
+        cart.products[productsArrayPosition].quantity = cart.products[productsArrayPosition].quantity + 1;
       } else {
         cart.products.push({ product: idProduct, quantity: 1 });
       }

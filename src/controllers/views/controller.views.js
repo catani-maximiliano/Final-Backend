@@ -94,10 +94,10 @@ class ViewsRouter extends Route {
             }
         })
 
-        this.get('/cart/:id', ['USER'], (req, res) => {
+        this.get('/cart/:uid', ['USER'], (req, res) => {
             try {
-                const cartId = req.params.id;
-                res.status(200).render('cart', { cartId });
+                const cartUId = req.params.uid;
+                res.status(200).render('cart', { cartUId });
             }
             catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
