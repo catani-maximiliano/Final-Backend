@@ -4,18 +4,12 @@ const cartCollection = "cart";
 
 const cartSchema = new mongoose.Schema({
   user_id: String,
-  products: {
-    type: [
-      {
-        product: String,
-        quantity: Number,
-        price: Number,
-        image: String,
-        title: String,
-      },
-    ],
-    default: [],
-  },
+  products: [
+    {
+      product: String,
+      quantity: Number,
+    },
+  ],
 });
 
 cartSchema.pre("find", function () {

@@ -41,21 +41,25 @@ class MongoCartManager {
   async getCartByUId(_id) {
     try {
       const getCartByUIdMongo = await Cart.findOne({ user_id: _id });
-      console.log(getCartByUIdMongo);
+      //console.log(getCartByUIdMongo);
       return getCartByUIdMongo;
     } catch (error) {
       return error;
     }
   }
 
-  async postCartProductsId(idCart, idProduct, exist) {
+  async postCartProductsId(uidCart, idProduct, exist) {
     try {
-      const cart = await Cart.findById(idCart);
+      const uicart = await this.getCartByUId(uidCart);
+      const cart = await Cart.findById(uicart._id);
+      const idCart = cart._id;
       if (exist) {
+
         const productsArrayPosition = cart.products.findIndex(
-          (item) => item.product.id == idProduct
-        );
+          (item) => item.product == idProduct);
+          console.log(productsArrayPosition)
         cart.products[productsArrayPosition].quantity = cart.products[productsArrayPosition].quantity + 1;
+      
       } else {
         cart.products.push({ product: idProduct, quantity: 1 });
       }

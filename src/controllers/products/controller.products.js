@@ -17,7 +17,7 @@ class ProductsRouter extends Route {
 
     this.get("/", ["PUBLIC"], async (req, res) => {
       try {
-        const { user } = req.session;
+        const { user  } = req.session;
         let linkMold = req.protocol + "://" + req.get("host") + "/products/";
         let limit;
         let page;

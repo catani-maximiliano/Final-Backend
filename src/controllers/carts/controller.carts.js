@@ -96,21 +96,30 @@ class CartRouter extends Route {
             }
         })
 
-        this.post('/:uid/products/:pid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
+        this.post('/products/:pid', ['USER', 'PREMIUM', 'ADMIN'], async (req, res) => {
             try {
-                const cartUId = req.params.uid;
+                const cartUId = req.session.user.idd;
                 const productId = req.params.pid;
+     
                 const getCartByUId = await cartsMongo.getCartByUId(cartUId);
-                const verifyExistence = getCartByUId.products.find((e) => e.product._id == productId);
-
-                if (verifyExistence) {
-                    const updateCartProducts = await cartsMongo.postCartProductsId(cartUId, productId, true);
-                    res.sendSuccess(updateCartProducts);
-                }
-                else {
+               console.log(getCartByUId )
+                if(getCartByUId.products && getCartByUId.products.length === 0) {
                     const updateCartProducts = await cartsMongo.postCartProductsId(cartUId, productId, false);
                     res.sendSuccess(updateCartProducts);
+                }else{
+                    const verifyExistence = getCartByUId.products.find( e => e.product === productId);
+                    console.log(verifyExistence);
+
+                    if (verifyExistence) {
+                        const updateCartProducts = await cartsMongo.postCartProductsId(cartUId, productId, true);
+                        res.sendSuccess(updateCartProducts);
+                    }
+                    else {
+                        const updateCartProducts = await cartsMongo.postCartProductsId(cartUId, productId, false);
+                        res.sendSuccess(updateCartProducts);
+                    }
                 }
+
             }
             catch (error) {
                 res.sendServerError(`something went wrong ${error}`)

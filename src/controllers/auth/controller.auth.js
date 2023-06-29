@@ -36,10 +36,9 @@ class AuthRouter extends Route {
 
             
             cartsMongo.addCart(req.user._id, {
-              user_id: req.user._id,
-              products: {},
+              user_id: req.user._id
             });
-            
+
             
             const dateNow = new Date();
             await userBD.updateConnection(req.user.email, dateNow);
