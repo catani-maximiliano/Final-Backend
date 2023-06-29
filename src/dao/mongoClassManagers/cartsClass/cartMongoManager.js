@@ -10,7 +10,7 @@ class MongoCartManager {
       return error;
     }
   }
-
+//crear carrito ..... OK
   async addCart(uid, cart) {
     try {
       const getCartByUIdMongo = await Cart.findOne({ user_id: uid });
@@ -28,7 +28,7 @@ class MongoCartManager {
       return error;
     }
   }
-
+// traer carrito ..... OK
   async getCartById(id) {
     try {
       const getCartByIdMongo = Cart.findOne({ _id: id });
@@ -37,7 +37,7 @@ class MongoCartManager {
       return error;
     }
   }
-
+  //traer carrito de comprar con id de usuario..... OK
   async getCartByUId(_id) {
     try {
       const getCartByUIdMongo = await Cart.findOne({ user_id: _id });
@@ -47,7 +47,7 @@ class MongoCartManager {
       return error;
     }
   }
-
+  //agrega productos al carrito y si existen agrega una cantidad mas..... OK
   async postCartProductsId(uidCart, idProduct, exist) {
     try {
       const uicart = await this.getCartByUId(uidCart);
@@ -89,29 +89,31 @@ class MongoCartManager {
       return error;
     }
   }
-
-  /**La función updateCartProductsId se utiliza para actualizar la cantidad de un producto en un carrito de compras existente.
-     *  Recibe como parámetros el ID del carrito (idCart), el ID del producto (idProduct), una bandera booleana exist que 
-     * indica si el producto ya existe en el carrito o no, y la cantidad deseada (quantity).
-
-      Si exist es true, la función buscará la posición del producto en el arreglo de productos del carrito (cart.products) mediante 
-      el ID del producto y actualizará la cantidad con la cantidad deseada. En caso contrario, se agregará un nuevo objeto al 
-      arreglo de productos con el ID del producto y la cantidad deseada.
-
-      Luego, la función utiliza findByIdAndUpdate para actualizar el documento del carrito con los nuevos valores del arreglo de 
-      productos y devuelve el resultado de la operación. */
+//actualizar quantity de productos dentro del carrito .... OK
   async updateCartProductsId(idCart, idProduct, exist, quantity) {
     try {
       //const cart = await Cart.findByUId(idCart);
       const cart = await Cart.findById(idCart);
+      //console.log("cart: " + cart)
+
       if (exist) {
-        const productsArrayPosition = cart.products.findIndex(
-          (item) => item.product.id == idProduct
-        );
+        const productsArrayPosition = cart.products.findIndex((item) => item.product == idProduct);
         cart.products[productsArrayPosition].quantity = quantity;
       } else {
         cart.products.push({ product: idProduct, quantity: quantity });
       }
+      const response = Cart.findByIdAndUpdate(idCart, cart);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  //Vaciar carrito ... OK
+  async emptyCart(idCart) {
+    try {
+      const cart = await Cart.findById(idCart);
+      cart.products= [];
       const response = Cart.findByIdAndUpdate(idCart, cart);
       return response;
     } catch (error) {

@@ -15,6 +15,7 @@ const privateAcces = (req, res, next) => {
 class ProductsRouter extends Route {
   init() {
 
+    //todos los productos
     this.get("/", ["PUBLIC"], async (req, res) => {
       try {
         const { user  } = req.session;
@@ -114,11 +115,13 @@ class ProductsRouter extends Route {
 
       res.sendSuccess(products);
     });
-
+    //cada producto por id 
     this.get("/:id", ["PUBLIC"], async (req, res) => {
       try {
         const productId = req.params.id;
+        console.log(productId);
         const getById = await productsMongo.getProductById(productId);
+        //console.log(getById)
         res.sendSuccess(getById);
       } catch (error) {
         req.logger.error(error.cause);

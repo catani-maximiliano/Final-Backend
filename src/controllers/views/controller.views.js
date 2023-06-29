@@ -104,9 +104,18 @@ class ViewsRouter extends Route {
             }
         })
 
-        this.get('/carts', ['USER'], (req, res) => {
+        this.get('/mycart', ['USER'], (req, res) => {
             try {
-                res.status(200).render('carts');
+                res.status(200).render('mycart');
+            }
+            catch (error) {
+                res.sendServerError(`something went wrong ${error}`)
+            }
+        })
+
+        this.get('/purchase', ['USER'], (req, res) => {
+            try {
+                res.status(200).render('purchase');
             }
             catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
