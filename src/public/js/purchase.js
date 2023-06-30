@@ -1,6 +1,6 @@
 window.onload = function () {
 
-  fetch("/api/carts/purchase", {
+  fetch("https://final-backend-production-f554.up.railway.app/api/carts/purchase", {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   })

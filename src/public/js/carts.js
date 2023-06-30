@@ -1,11 +1,11 @@
 window.onload = function () {
-  fetch(`http://localhost:3000/api/sessions/current`)
+  fetch(`https://final-backend-production-f554.up.railway.app//api/sessions/current`)
     .then((response) => response.json())
     .then((user) => findCart(user.payload.idd))
     .catch((error) => console.error(error));
 
   function findCart(uid) {
-    fetch(`http://localhost:3000/api/carts/${uid}`)
+    fetch(`https://final-backend-production-f554.up.railway.app//api/carts/${uid}`)
       .then((response) => response.json())
       .then((data) => procesarDatos(data.payload))
       .catch((error) => console.error(error));

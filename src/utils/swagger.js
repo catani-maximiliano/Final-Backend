@@ -10,7 +10,7 @@ const swaggerSpec = {
     },
     servers:[
       {
-        url: "http:///localhost:3000"
+        url: "https://final-backend-production-f554.up.railway.app/"
       }
     ]
   },

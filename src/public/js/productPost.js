@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
       try {
         // Realiza una solicitud POST al endpoint con los datos del producto
-        const response = await fetch("/api/products", {
+        const response = await fetch("https://final-backend-production-f554.up.railway.app/api/products", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

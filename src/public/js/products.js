@@ -1,5 +1,5 @@
 window.onload = function () {
-  fetch("/api/products")
+  fetch("https://final-backend-production-f554.up.railway.app/api/products")
     .then((response) => response.json())
     .then((data) => procesarDatos(data.payload))
     .catch((error) => console.error(error));
@@ -8,7 +8,7 @@ window.onload = function () {
   const cartel = document.getElementById("cartel");
 
   function agregarAlCarrito(data) {
-    fetch(`/api/carts/products/${data}`, {
+    fetch(`https://final-backend-production-f554.up.railway.app/api/carts/products/${data}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

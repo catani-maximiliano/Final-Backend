@@ -1,6 +1,6 @@
 
 window.onload = function() {
-  fetch('/api/realTimeProducts')
+  fetch('https://final-backend-production-f554.up.railway.app/api/realTimeProducts')
     .then(response => response.json())
     .then(data => procesarDatos(data.payload))
     .catch(error => console.error(error));

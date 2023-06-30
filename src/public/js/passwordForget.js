@@ -10,7 +10,7 @@ form.addEventListener("submit", (e) => {
 
     data.forEach((value, key) => obj[key] = value);
     
-    const url = "/api/auth/passwordReset";
+    const url = "https://final-backend-production-f554.up.railway.app/api/auth/passwordReset";
     const headers = {
         "Content-Type": "application/json"
     }

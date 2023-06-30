@@ -1,6 +1,6 @@
 window.onload = function () {
   
-  fetch(`http://localhost:3000/api/carts/mycart`) 
+  fetch(`https://final-backend-production-f554.up.railway.app//api/carts/mycart`) 
     .then((response) => response.json())
     .then((data) => {console.log(data)
      
@@ -19,7 +19,7 @@ function procesarDatos(data) {
 
   let htmlPromises = data.products.map((product) => {
     console.log(product);
-    return fetch(`http://localhost:3000/api/products/${product.product}`)
+    return fetch(`https://final-backend-production-f554.up.railway.app//api/products/${product.product}`)
       .then((response) => response.json())
       .then((productData) => {
         console.log(productData);
@@ -83,7 +83,7 @@ function procesarDatos(data) {
       // Botón para vaciar el carrito
       const emptyCartButton = document.getElementById("empty-cart-btn");
       emptyCartButton.addEventListener("click", () => {
-        fetch("http://localhost:3000/api/carts/", {
+        fetch("https://final-backend-production-f554.up.railway.app//api/carts/", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
         })
@@ -101,7 +101,7 @@ function procesarDatos(data) {
         button.addEventListener("click", (event) => {
           const productId = event.target.dataset.productId;
 
-          fetch(`http://localhost:3000/api/carts/products/${productId}`, {
+          fetch(`https://final-backend-production-f554.up.railway.app//api/carts/products/${productId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
           })
@@ -119,7 +119,7 @@ function procesarDatos(data) {
       //boton de compra de carrito
       const purchaseButton = document.getElementById("purchase-button");
       purchaseButton.addEventListener("click", () => {
-        fetch("http://localhost:3000/api/carts/purchase", {
+        fetch("https://final-backend-production-f554.up.railway.app//api/carts/purchase", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         })
@@ -142,7 +142,7 @@ function procesarDatos(data) {
           const newQuantity = quantityInput.value;
 
           // Realizar la solicitud PUT/PATCH al endpoint para actualizar la cantidad
-          fetch(`http://localhost:3000/api/carts/products/${productId}`, {
+          fetch(`https://final-backend-production-f554.up.railway.app//api/carts/products/${productId}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",

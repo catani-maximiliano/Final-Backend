@@ -3,7 +3,7 @@ const parts = url.split('/'); // separar la URL por "/"
 const id = parts[parts.length - 1]; // obtener la última parte de la URL, que es el ID del producto
 
 window.onload = function() {
-  fetch(`/api/products/${id}`)
+  fetch(`https://final-backend-production-f554.up.railway.app/api/products/${id}`)
     .then(response => response.json())
     .then(data => procesarDatos(data.payload))
     .catch(error => console.error(error));

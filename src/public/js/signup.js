@@ -9,7 +9,7 @@ form.addEventListener("submit", (e) => {
     const obj = {};
     data.forEach((value, key) => obj[key] = value);
 
-    const url = "/user";
+    const url = "https://final-backend-production-f554.up.railway.app/user";
     const headers = { "Content-Type": "application/json"};
     const method = "POST";
     const body = JSON.stringify(obj);

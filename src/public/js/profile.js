@@ -1,5 +1,5 @@
 window.onload = function() {
-  fetch(`/api/sessions/current`)
+  fetch(`https://final-backend-production-f554.up.railway.app/api/sessions/current`)
     .then(response => response.json())
     .then(data => procesarDatos(data.payload))
     .catch(error => console.error(error));
