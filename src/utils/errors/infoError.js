@@ -2,13 +2,6 @@ const enumErrors = require("./enumErrors");
 
 require("colors")
 
-/**La función generateErrorInfo recibe un código de error y un objeto que contiene información sobre el error. 
- * Si el código es enumErrors.INVALID_TYPES_ERROR, la función devuelve un mensaje indicando que algunos datos son 
- * inválidos o inexistentes, junto con una lista de los datos requeridos y los valores recibidos. 
- * Si el código es enumErrors.DATABASE_ERROR, la función devuelve un mensaje similar que enumera los datos requeridos 
- * para la conexión a la base de datos. 
- * Si el código es enumErrors.ROUTING_ERROR, la función devuelve un mensaje indicando que la ruta buscada no existe. 
- * En todos los casos, el mensaje se devuelve en formato de texto rojo. */
 const generateErrorInfo = (code, obj) => {
     if(code === enumErrors.INVALID_TYPES_ERROR){
         const response = `Algunos de los datos son inválidos o inexistentes.

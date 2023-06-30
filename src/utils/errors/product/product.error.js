@@ -1,5 +1,5 @@
 //const productModel = require("../../../dao/mongo/models/products.model")
-const CustomError = require("../customErrors")
+const customError = require("../customErrors")
 const enumErrors = require("../enumErrors")
 
 require("colors")
@@ -7,7 +7,7 @@ require("colors")
 const productError = (pid, obj) => {
 
     if(!obj.title || !obj.description || !obj.price || !obj.thumbail || !obj.code || !obj.stock || !obj.category){
-        CustomError.createError({
+        customError.createError({
             name: "Error al agregar el producto",
             cause: `Alguno de los datos son inválidos:
             *Título: Se esperaba un string, se recibió: ${obj.title}
