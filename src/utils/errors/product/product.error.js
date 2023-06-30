@@ -1,5 +1,5 @@
 
-const customError = require("../customErrors.js")
+const CustomError = require("../CustomErrors.js")
 const enumErrors = require("../enumErrors.js")
 
 require("colors")
@@ -7,7 +7,7 @@ require("colors")
 const productError = (pid, obj) => {
 
     if(!obj.title || !obj.description || !obj.price || !obj.thumbail || !obj.code || !obj.stock || !obj.category){
-        customError.createError({
+        CustomError.createError({
             name: "Error al agregar el producto",
             cause: `Alguno de los datos son inválidos:
             *Título: Se esperaba un string, se recibió: ${obj.title}
