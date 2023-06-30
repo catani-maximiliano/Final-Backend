@@ -1,5 +1,5 @@
 window.onload = function() {
-  fetch(`http://localhost:3000/api/sessions/current`)
+  fetch(`/api/sessions/current`)
     .then(response => response.json())
     .then(data => procesarDatos(data.payload))
     .catch(error => console.error(error));

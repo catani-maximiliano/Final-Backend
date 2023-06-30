@@ -3,7 +3,7 @@ const supertest = require("supertest");
 
 const expect = chai.expect
 
-const requester = supertest('http://localhost:3000')
+const requester = supertest('')
 
 describe('Testing', () => {
   describe('Test de Products', () => {

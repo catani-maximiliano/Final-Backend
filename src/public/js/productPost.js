@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
       try {
         // Realiza una solicitud POST al endpoint con los datos del producto
-        const response = await fetch("http://localhost:3000/api/products", {
+        const response = await fetch("/api/products", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

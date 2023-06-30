@@ -1,6 +1,6 @@
 
 window.onload = function() {
-  fetch('http://localhost:3000/api/realTimeProducts')
+  fetch('/api/realTimeProducts')
     .then(response => response.json())
     .then(data => procesarDatos(data.payload))
     .catch(error => console.error(error));
