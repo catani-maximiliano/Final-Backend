@@ -1,11 +1,14 @@
 window.onload = function () {
-  fetch(`http://localhost:3000/api/carts/mycart`)
+  
+  fetch(`http://localhost:3000/api/carts/mycart`) 
     .then((response) => response.json())
-    .then((data) => {
+    .then((data) => {console.log(data)
+     
       procesarDatos(data.payload);
     })
     .catch((error) => console.error(error));
 };
+
 
 const myCartLink = document.getElementById("mycartlink");
 const cart = document.getElementById("cart");
@@ -73,7 +76,7 @@ function procesarDatos(data) {
             Empty Cart
           </button>
           <button class="btn btn-danger" id="purchase-button">
-          <a href="/purchase">comprar carro</a>
+          <a >comprar carro</a>
         </button>
         </div>`;
 
@@ -90,9 +93,6 @@ function procesarDatos(data) {
           myCartLink.click();
         }, 1000);
       });
-
-
-      
 
       // Botón de eliminación de producto
       const deleteProductButtons =
@@ -116,10 +116,25 @@ function procesarDatos(data) {
         });
       });
 
+      //boton de compra de carrito
+      const purchaseButton = document.getElementById("purchase-button");
+      purchaseButton.addEventListener("click", () => {
+        fetch("http://localhost:3000/api/carts/purchase", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.payload);
+        })
+        .catch(error => console.error(error));
+        setTimeout(() => {
+          emptyCartButton.click();
+        }, 1000);
+      });
+
       // Agregar evento de escucha a los botones de actualización de cantidad
-      const updateQuantityButtons = document.getElementsByClassName(
-        "update-quantity-btn"
-      );
+      const updateQuantityButtons = document.getElementsByClassName("update-quantity-btn");
       Array.from(updateQuantityButtons).forEach((button) => {
         button.addEventListener("click", (event) => {
           const productId = event.target.dataset.productId;

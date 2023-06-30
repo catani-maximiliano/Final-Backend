@@ -2,14 +2,20 @@ const mongoose = require("mongoose");
 
 const ticketsCollection = "tickets";
 
-
 const ticketSchema = new mongoose.Schema({
-    purchase_datatime: String,
-    amount: Number,
-    purchaser_id: String,
-    purchaser:String,
-    purchaser_email: String,
-});
+
+    purchase_datatime: {
+        type: String
+    },
+    amount: {
+        type: Number
+    },
+    purchaser: {
+        type: String
+    },
+    products: Array
+      }
+);
 
 const ticketsModel = mongoose.model(ticketsCollection, ticketSchema);
 
