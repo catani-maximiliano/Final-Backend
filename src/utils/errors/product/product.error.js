@@ -1,5 +1,5 @@
-import customError from "../customErrors"
 
+const customError = require("../customErrors")
 const enumErrors = require("../enumErrors")
 
 require("colors")
