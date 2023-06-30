@@ -1,6 +1,6 @@
 
-const customError = require("../customErrors")
-const enumErrors = require("../enumErrors")
+const customError = require("../customErrors.js")
+const enumErrors = require("../enumErrors.js")
 
 require("colors")
 
